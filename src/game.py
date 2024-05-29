@@ -5,6 +5,12 @@ from src.dragger import Dragger
 from src.piece import Piece
 
 
+def render_piece(piece: Piece, surface: pygame.Surface, img_center: tuple[int, int]) -> None:
+    img = pygame.image.load(piece.texture)
+    piece.texture_rect = img.get_rect(center=img_center)
+    surface.blit(img, piece.texture_rect)
+
+
 class Game:
     def __init__(self):
         self.board = Board()
@@ -33,10 +39,16 @@ class Game:
                     if piece is not self.dragger.piece:
                         piece.set_texture(size=80)
                         img_center = col * SQSIZE + SQSIZE // 2, row * SQSIZE + SQSIZE // 2
-                        self.render_piece(piece, surface, img_center)
+                        render_piece(piece, surface, img_center)
 
-
-    def render_piece(self, piece: Piece, surface: pygame.Surface, img_center: tuple[int, int]) -> None:
-        img = pygame.image.load(piece.texture)
-        piece.texture_rect = img.get_rect(center=img_center)
-        surface.blit(img, piece.texture_rect)
+    def show_moves(self, surface):
+        if self.dragger.dragging:
+            piece = self.dragger.piece
+            # Loop over all moves
+            for move in piece.valid_moves:
+                # create color
+                color = '#C86464' if (move.final.row + move.final.col) % 2 == 0 else '#C84646'
+                # create rect
+                rect = (move.final.col * SQSIZE, move.final.row * SQSIZE, SQSIZE, SQSIZE)
+                # blit
+                pygame.draw.rect(surface, color, rect)
