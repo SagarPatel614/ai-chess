@@ -4,6 +4,7 @@ from src.board import Board
 from src.dragger import Dragger
 from src.piece import Piece
 from src.config import Config
+from src.square import Square
 
 
 def render_piece(piece: Piece, surface: pygame.Surface, img_center: tuple[int, int]) -> None:
@@ -28,6 +29,26 @@ class Game:
                 color = self.theme.bg.light if (row + col) % 2 == 0 else self.theme.bg.dark
                 rect = (col * SQSIZE, row * SQSIZE, SQSIZE, SQSIZE)
                 pygame.draw.rect(surface, color, rect)
+
+                # row co-ordinates
+                if col == 0:
+                    # color
+                    color = self.theme.bg.dark if row % 2 == 0 else self.theme.bg.light
+                    # label
+                    lbl = self.config.font.render(str(ROWS-row), 1, color)
+                    lbl_pos = (5, 5 + row * SQSIZE)
+                    # blit
+                    surface.blit(lbl, lbl_pos)
+
+                # col co-ordinates
+                if row == 7:
+                    # color
+                    color = self.theme.bg.dark if (row + col) % 2 == 0 else self.theme.bg.light
+                    # label
+                    lbl = self.config.font.render(Square.get_alphacol(col), 1, color)
+                    lbl_pos = (col * SQSIZE + SQSIZE - 20, HEIGHT - 20)
+                    # blit
+                    surface.blit(lbl, lbl_pos)
 
     def show_pieces(self, surface: pygame.Surface) -> None:
         for row in range(ROWS):
