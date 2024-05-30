@@ -13,6 +13,7 @@ def render_piece(piece: Piece, surface: pygame.Surface, img_center: tuple[int, i
 
 class Game:
     def __init__(self):
+        self.player = 'white'
         self.board = Board()
         self.dragger = Dragger()
 
@@ -41,7 +42,7 @@ class Game:
                         img_center = col * SQSIZE + SQSIZE // 2, row * SQSIZE + SQSIZE // 2
                         render_piece(piece, surface, img_center)
 
-    def show_moves(self, surface):
+    def show_moves(self, surface) -> None:
         if self.dragger.dragging:
             piece = self.dragger.piece
             # Loop over all moves
@@ -52,3 +53,6 @@ class Game:
                 rect = (move.final.col * SQSIZE, move.final.row * SQSIZE, SQSIZE, SQSIZE)
                 # blit
                 pygame.draw.rect(surface, color, rect)
+
+    def next_turn(self) -> None:
+        self.player = 'white' if self.player == 'black' else 'black'

@@ -41,14 +41,16 @@ class Main:
                     # If clicked square has a piece
                     if board.squares[clicked_row][clicked_col].has_piece():
                         piece = board.squares[clicked_row][clicked_col].piece
-                        board.calc_moves(piece, clicked_row, clicked_col)
-                        dragger.save_initial(event.pos)
-                        dragger.drag_piece(piece)
+                        # Valid player piece
+                        if piece.color == game.player:
+                            board.calc_moves(piece, clicked_row, clicked_col)
+                            dragger.save_initial(event.pos)
+                            dragger.drag_piece(piece)
 
-                        # show method
-                        game.show_bg(screen)
-                        game.show_moves(screen)
-                        game.show_pieces(screen)
+                            # show method
+                            game.show_bg(screen)
+                            game.show_moves(screen)
+                            game.show_pieces(screen)
 
                 # Mouse Motion
                 elif event.type == pygame.MOUSEMOTION:
@@ -73,11 +75,14 @@ class Main:
                         final = Square(release_row, release_col)
                         move = Move(initial, final)
 
+                        # Is this a valid move
                         if board.valid_move(dragger.piece, move):
                             board.move(dragger.piece, move)
                             # show methods
                             game.show_bg(screen)
                             game.show_pieces(screen)
+                            # change turn
+                            game.next_turn()
 
                     dragger.undrag_piece()
 
