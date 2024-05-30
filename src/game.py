@@ -55,7 +55,7 @@ class Game:
                 # blit
                 pygame.draw.rect(surface, color, rect)
 
-    def show_last_move(self, surface: pygame.Surface):
+    def show_last_move(self, surface: pygame.Surface) -> None:
         if self.board.last_move:
             initial = self.board.last_move.initial
             final = self.board.last_move.final
@@ -67,7 +67,7 @@ class Game:
                 # blit
                 pygame.draw.rect(surface, color, rect)
 
-    def show_hover(self, surface: pygame.Surface):
+    def show_hover(self, surface: pygame.Surface) -> None:
         if self.hovered_square:
             # color
             color = (180, 180, 180)
@@ -79,5 +79,5 @@ class Game:
     def next_turn(self) -> None:
         self.player = 'white' if self.player == 'black' else 'black'
 
-    def set_hover(self, row, col):
+    def set_hover(self, row: int, col: int) -> None:
         self.hovered_square = self.board.squares[row][col]
