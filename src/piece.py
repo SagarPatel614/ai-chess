@@ -126,6 +126,8 @@ class Queen(Piece):
 class King(Piece):
 
     def __init__(self, color: str):
+        self.left_rook = None
+        self.right_rook = None
         super().__init__(name='king', color=color, value=10000.0)
 
     def _valid_moves(self, row: int, col: int) -> List[Tuple[int, int]]:
