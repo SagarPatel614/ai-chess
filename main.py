@@ -85,7 +85,11 @@ class Main:
 
                         # Is this a valid move
                         if board.valid_move(dragger.piece, move):
+                            captured = board.squares[release_row][release_col].has_piece()
+                            # move the piece
                             board.move(dragger.piece, move)
+                            # play sound
+                            game.play_sound(captured)
                             # show methods
                             game.show_bg(screen)
                             game.show_last_move(screen)
