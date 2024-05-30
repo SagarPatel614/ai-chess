@@ -3,6 +3,7 @@ from src.const import *
 from src.board import Board
 from src.dragger import Dragger
 from src.piece import Piece
+from src.config import Config
 
 
 def render_piece(piece: Piece, surface: pygame.Surface, img_center: tuple[int, int]) -> None:
@@ -17,17 +18,14 @@ class Game:
         self.hovered_square = None
         self.board = Board()
         self.dragger = Dragger()
+        self.config = Config()
+        self.theme = self.config.theme
 
     # Show methods
-    @staticmethod
-    def show_bg(surface: pygame.Surface) -> None:
+    def show_bg(self, surface: pygame.Surface) -> None:
         for row in range(ROWS):
             for col in range(COLS):
-                if (row + col) % 2 == 0:
-                    color = (234, 235, 200)  # Light green
-                else:
-                    color = (119, 154, 88)  # dark green
-
+                color = self.theme.bg.light if (row + col) % 2 == 0 else self.theme.bg.dark
                 rect = (col * SQSIZE, row * SQSIZE, SQSIZE, SQSIZE)
                 pygame.draw.rect(surface, color, rect)
 
@@ -49,7 +47,7 @@ class Game:
             # Loop over all moves
             for move in piece.moves:
                 # create color
-                color = '#C86464' if (move.final.row + move.final.col) % 2 == 0 else '#C84646'
+                color = self.theme.moves.light if (move.final.row + move.final.col) % 2 == 0 else self.theme.moves.dark
                 # create rect
                 rect = (move.final.col * SQSIZE, move.final.row * SQSIZE, SQSIZE, SQSIZE)
                 # blit
@@ -61,7 +59,7 @@ class Game:
             final = self.board.last_move.final
             for pos in [initial, final]:
                 # color
-                color = (244, 247, 116) if (pos.row + pos.col) % 2 == 0 else (172, 195, 51)
+                color = self.theme.trace.light if (pos.row + pos.col) % 2 == 0 else self.theme.trace.dark
                 # rect
                 rect = (pos.col * SQSIZE, pos.row * SQSIZE, SQSIZE, SQSIZE)
                 # blit
@@ -70,7 +68,7 @@ class Game:
     def show_hover(self, surface: pygame.Surface) -> None:
         if self.hovered_square:
             # color
-            color = (180, 180, 180)
+            color = self.theme.hover
             # rect
             rect = (self.hovered_square.col * SQSIZE, self.hovered_square.row * SQSIZE, SQSIZE, SQSIZE)
             # blit
@@ -81,3 +79,7 @@ class Game:
 
     def set_hover(self, row: int, col: int) -> None:
         self.hovered_square = self.board.squares[row][col]
+
+    def change_theme(self) -> None:
+        self.config.change_theme()
+        self.theme = self.config.theme
