@@ -14,6 +14,7 @@ def render_piece(piece: Piece, surface: pygame.Surface, img_center: tuple[int, i
 class Game:
     def __init__(self):
         self.player = 'white'
+        self.hovered_square = None
         self.board = Board()
         self.dragger = Dragger()
 
@@ -66,5 +67,17 @@ class Game:
                 # blit
                 pygame.draw.rect(surface, color, rect)
 
+    def show_hover(self, surface: pygame.Surface):
+        if self.hovered_square:
+            # color
+            color = (180, 180, 180)
+            # rect
+            rect = (self.hovered_square.col * SQSIZE, self.hovered_square.row * SQSIZE, SQSIZE, SQSIZE)
+            # blit
+            pygame.draw.rect(surface, color, rect, width=3)
+
     def next_turn(self) -> None:
         self.player = 'white' if self.player == 'black' else 'black'
+
+    def set_hover(self, row, col):
+        self.hovered_square = self.board.squares[row][col]
