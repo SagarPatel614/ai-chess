@@ -107,3 +107,6 @@ class Game:
 
     def play_sound(self, captured: bool = False) -> None:
         self.config.capture_sound.play() if captured else self.config.move_sound.play()
+
+    def reset(self) -> None:
+        self.__init__()
