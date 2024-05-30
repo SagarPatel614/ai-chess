@@ -16,6 +16,7 @@ class Board:
     def __init__(self):
         self.squares = [[Square(0, 0) for _ in range(ROWS)] for _ in range(ROWS)]
         self._create()
+        self.last_move = None
         self._add_piece('white')
         self._add_piece('black')
 
@@ -99,3 +100,22 @@ class Board:
                 p_row, p_col = move
                 if self.squares[p_row][p_col].is_empty_or_rival(piece.color):
                     create_move(piece, row, col, p_row, p_col)
+
+    def move(self, piece, move):
+        initial = move.initial
+        final = move.final
+
+        # console board move update
+        self.squares[initial.row][initial.col].piece = None
+        self.squares[final.row][final.col].piece = piece
+        # Piece moved
+        piece.moved = True
+        # clear valid moves
+        piece.clear_moves()
+        # update last move
+        self.last_move = move
+
+    @staticmethod
+    def valid_move(piece, move):
+        return move in piece.moves
+

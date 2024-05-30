@@ -45,7 +45,7 @@ class Game:
         if self.dragger.dragging:
             piece = self.dragger.piece
             # Loop over all moves
-            for move in piece.valid_moves:
+            for move in piece.moves:
                 # create color
                 color = '#C86464' if (move.final.row + move.final.col) % 2 == 0 else '#C84646'
                 # create rect

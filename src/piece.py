@@ -38,6 +38,9 @@ class Piece:
     def valid_moves(self, row: int, col: int) -> Any:
         return self._valid_moves(row, col)
 
+    def clear_moves(self) -> None:
+        self.moves = []
+
 
 class Pawn(Piece):
 
@@ -87,7 +90,7 @@ class Knight(Piece):
             (row - 1, col - 2),
             (row - 2, col - 1),
         ]
-        return [p_moves for p_moves in possible_moves if in_range(p_moves)]
+        return [(p_row, p_col) for p_row, p_col in possible_moves if in_range(p_row, p_col)]
 
 
 class Bishop(Piece):
@@ -137,4 +140,4 @@ class King(Piece):
             (row, col - 1),
             (row, col + 1),
         ]
-        return [p_moves for p_moves in possible_moves if in_range(p_moves)]
+        return [(p_row, p_col) for p_row, p_col in possible_moves if in_range(p_row, p_col)]
