@@ -1,6 +1,8 @@
 import copy
+import os
 
 from src.const import *
+from src.sound import Sound
 from src.square import Square
 from src.piece import *
 from src.move import Move
@@ -53,7 +55,7 @@ class Board:
     def in_check(self, piece, move):
         temp_piece = copy.deepcopy(piece)
         temp_board = copy.deepcopy(self)
-        temp_board.move(temp_piece, move)
+        temp_board.move(temp_piece, move, in_check=True)
 
         for row in range(ROWS):
             for col in range(COLS):
@@ -80,6 +82,25 @@ class Board:
                 if self.squares[p_row][p_col].has_rival_piece(piece.color):
                     final_piece = self.squares[p_row][p_col].piece
                     self.create_move(piece, row, col, p_row, p_col, final_piece, check=check_flag)
+
+            # En passant
+            r = 3 if piece.color == 'white' else 4
+            fr = 2 if piece.color == 'white' else 5
+            # Left en passant
+            if in_range(col-1) and row == r:
+                if self.squares[row][col-1].has_rival_piece(piece.color):
+                    p = self.squares[row][col-1].piece
+                    if isinstance(p, Pawn):
+                        if p.en_passant:
+                            self.create_move(piece, row, col, fr, col-1, p, check_flag)
+            # Right en passant
+            if in_range(col+1) and row == r:
+                if self.squares[row][col+1].has_rival_piece(piece.color):
+                    p = self.squares[row][col+1].piece
+                    if isinstance(p, Pawn):
+                        if p.en_passant:
+                            self.create_move(piece, row, col, fr, col+1, p, check_flag)
+
         # Knight moves
         elif isinstance(piece, Knight):
             possible_moves = piece.valid_moves(row, col)
@@ -184,9 +205,11 @@ class Board:
                                     piece.add_move(move_k)
                                     right_rook.add_move(move_r)
 
-    def move(self, piece, move):
+    def move(self, piece, move, in_check=False):
         initial = move.initial
         final = move.final
+
+        en_passant_empty = self.squares[final.row][final.col].is_empty()
 
         # console board move update
         self.squares[initial.row][initial.col].piece = None
@@ -194,7 +217,20 @@ class Board:
 
         # pawn promotion
         if isinstance(piece, Pawn):
-            self.check_promotion(piece, final)
+            diff = final.col - initial.col
+            if diff != 0 and en_passant_empty:
+                # console board move update
+                self.squares[initial.row][initial.col + diff].piece = None
+                if not in_check:
+                    sound = Sound(os.path.join(
+                        'assets/sounds/capture.wav'
+                    ))
+                    sound.play()
+            # # pawn en passant
+            # if self.en_passant(initial, final):
+            #     piece.en_passant = True
+            else:
+                self.check_promotion(piece, final)  # pawn promotion
 
         # king castling
         if isinstance(piece, King):
@@ -218,5 +254,22 @@ class Board:
         if final.row == 0 or final.row == 7:
             self.squares[final.row][final.col].piece = Queen(piece.color)
 
-    def castling(self, initial, final):
+    @staticmethod
+    def castling(initial, final):
         return abs(initial.col - final.col) == 2
+
+    @staticmethod
+    def en_passant(initial, final):
+        return abs(initial.row - final.row) == 2
+
+    def reset_en_passant(self, piece):
+        if not isinstance(piece, Pawn):
+            return
+
+        for row in range(ROWS):
+            for col in range(COLS):
+                p = self.squares[row][col].piece
+                if isinstance(p, Pawn) and self.last_move.final.piece != p:
+                    p.en_passant = False
+
+        piece.en_passant = True

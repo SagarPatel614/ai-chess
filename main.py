@@ -85,9 +85,11 @@ class Main:
 
                         # Is this a valid move
                         if board.valid_move(dragger.piece, move):
+                            # Normal Capture
                             captured = board.squares[release_row][release_col].has_piece()
                             # move the piece
                             board.move(dragger.piece, move)
+                            board.reset_en_passant(dragger.piece)
                             # play sound
                             game.play_sound(captured)
                             # show methods
@@ -111,7 +113,6 @@ class Main:
                         game = self.game
                         board = self.game.board
                         dragger = self.game.dragger
-
 
                 # Game Quit
                 elif event.type == pygame.QUIT:
