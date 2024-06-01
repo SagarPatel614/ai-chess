@@ -156,7 +156,7 @@ class Board:
         # king castling
         if isinstance(piece, King):
             if self.castling(initial, final):
-                dif = final.col = initial.col
+                dif = final.col - initial.col
                 rook = piece.left_rook if (dif < 0) else piece.right_rook
                 self.move(rook, rook.moves[-1])
 
